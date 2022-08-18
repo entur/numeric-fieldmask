@@ -143,9 +143,7 @@ jobs:
     - persist_to_workspace:
         root: .
         paths:
-        - spi-impl/target/
-        - usage/target/
-
+        - target/
     - run:
         name: Save test results
         command: |
