@@ -37,7 +37,7 @@ Example single level mask:
 ```java
 FieldMask onlySeconds = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
         NumericFieldMask.newBuilder()
-        .setInvertMask(true) // Invert mask
+        .setInvertMask(true) // Invert mask - exclude listed fields
         .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER)) // Add field to include/exclude
         .build());
 ```

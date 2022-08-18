@@ -210,7 +210,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
-                    <attachProtoSources>true</attachProtoSources>
+                    <protoSourceRoot>src/main/resources</protoSourceRoot>
                     <protocArtifact>com.google.protobuf:protoc:${proto.version}:exe:${os.detected.classifier}</protocArtifact>
                 </configuration>
                 <executions>
