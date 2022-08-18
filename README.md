@@ -15,9 +15,10 @@ Please read https://stackoverflow.com/questions/69067689/why-does-protobufs-fiel
 
 ## Functionality
 
-* Convert [NumericFieldMask](src/main/proto/numericfieldmask.proto) to [FieldMasks](https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/FieldMask.html) to utilize functionality provided by https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/util/FieldMaskUtil 
+* Convert [NumericFieldMask](src/main/proto/numericfieldmask.proto) to [FieldMasks](https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/FieldMask.html) to utilize functionality provided by [FieldMaskUtil](https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/util/FieldMaskUtil) 
 * Support for inverting masks, ie. specify fields to exclude instead of including (uses compiled protobuf descriptors to analyze message structures)
 
+Use standard [FieldMaskUtil](https://developers.google.com/protocol-buffers/docs/reference/java/com/google/protobuf/util/FieldMaskUtil) operations to do actual masking operations.
 
 Proto definition:
 ```protobuf
