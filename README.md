@@ -40,7 +40,8 @@ Example single level mask:
 FieldMask onlySeconds = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
         NumericFieldMask.newBuilder()
         .setInvertMask(true) // Invert mask
-        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER)) // Add field to include/exclude
+        .addFieldNumberPath(
+          NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER)) // Add field to include/exclude
         .build());
 ```
 
@@ -49,6 +50,7 @@ Example multilevel level mask:
 ```java
 FieldMask onlySeconds = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
     NumericFieldMask.newBuilder()
-        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(level1_fieldNumber, level2_fieldNumber, level3_fieldNumber ...)) 
+        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(level1_fieldNumber, 
+          level2_fieldNumber, level3_fieldNumber ...)) 
         .build());
 ```
