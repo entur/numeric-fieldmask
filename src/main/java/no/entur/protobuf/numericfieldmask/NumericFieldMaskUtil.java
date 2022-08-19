@@ -23,23 +23,22 @@ package no.entur.protobuf.numericfieldmask;
  * #L%
  */
 
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.FieldMask;
-import com.google.protobuf.GeneratedMessageV3;
-import com.google.protobuf.util.FieldMaskUtil;
-import no.entur.protobuf.NumericFieldMask;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.util.FieldMaskUtil;
+
+import no.entur.protobuf.NumericFieldMask;
 
 public class NumericFieldMaskUtil {
 
@@ -48,8 +47,9 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Convert a numeric field mask to a Google Protobuf fieldmask with fieldnames instead of fieldnumbers (ie "1.2" -> "rootMessage.subMessage")
+	 * 
 	 * @param protoDescriptor MessageDescriptor of root message that paths refer to
-	 * @param mask mask to process
+	 * @param mask            mask to process
 	 * @return standard fieldmask that can be used using FieldMaskUtil
 	 */
 	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, NumericFieldMask mask) {
@@ -92,26 +92,25 @@ public class NumericFieldMaskUtil {
 			Descriptors.FieldDescriptor fieldDescriptor = messageDescriptor.findFieldByNumber(Integer.valueOf(parent));
 			if (fieldDescriptor.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
 				Descriptors.Descriptor subMessageDescriptor = fieldDescriptor.getMessageType();
-				String newParentPath = buildNestedPath(new String[] { parentPath, parent });
-				return buildNestedPath(new String[] { toFieldName(messageDescriptor, Integer.parseInt(parent)),
-						resolveNumericPath(newParentPath, sub, subMessageDescriptor) });
+				String newParentPath = buildNestedPath(parentPath, parent);
+				return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(parent)), resolveNumericPath(newParentPath, sub, subMessageDescriptor));
 			} else {
 				// Not a message type to follow
-				return buildNestedPath(new String[] { toFieldName(messageDescriptor, Integer.parseInt(parent)) });
+				return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(parent)));
 			}
 		} else {
 
-			return buildNestedPath(new String[] { toFieldName(messageDescriptor, Integer.parseInt(subPath)) });
+			return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(subPath)));
 		}
 
 	}
 
-
 	/**
 	 * Filter a message according to a NumericFieldMask
-	 * @param source message to filter
+	 * 
+	 * @param source        message to filter
 	 * @param targetBuilder a builder for the target message (builder for source)
-	 * @param mask mask to apply
+	 * @param mask          mask to apply
 	 * @return a filtered message. If mask is empty, source object is returned
 	 * @param <T> Protobuf parent message type (GeneratedMessageV3)
 	 */
@@ -128,6 +127,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Checks if a mask indicates that all fields should be present.
+	 * 
 	 * @param mask
 	 * @return
 	 */
@@ -139,7 +139,7 @@ public class NumericFieldMaskUtil {
 		return protoDescriptor.findFieldByNumber(fieldNumber).getName();
 	}
 
-	 static String buildNestedPath(int... segments) {
+	static String buildNestedPath(int... segments) {
 		String path = Arrays.stream(segments).mapToObj(i -> ((Integer) i).toString()).collect(Collectors.joining(PATH_SEPARATOR));
 		return path;
 	}
@@ -148,13 +148,12 @@ public class NumericFieldMaskUtil {
 		return Stream.of(segments).filter(value -> null != value).collect(Collectors.joining(PATH_SEPARATOR));
 	}
 
-	 static Tree<Integer> buildMaskTree(NumericFieldMask mask) {
+	static Tree<Integer> buildMaskTree(NumericFieldMask mask) {
 
 		Tree<Integer> fieldTree = new Tree<>(-1);
 		List<String> fieldNumberPathList = mask.getFieldNumberPathList();
 		for (String path : fieldNumberPathList) {
 			String[] elements = path.split(PATH_SEPARATOR_REGEX);
-
 
 			fieldTree.rootNode.addChildPath(Arrays.stream(elements).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList()));
 		}
@@ -162,7 +161,7 @@ public class NumericFieldMaskUtil {
 		return fieldTree;
 	}
 
-	 static Tree<Integer> buildMessageTree(Descriptors.Descriptor messageDescriptor, int maxDepth) {
+	static Tree<Integer> buildMessageTree(Descriptors.Descriptor messageDescriptor, int maxDepth) {
 		Tree<Integer> fieldTree = new Tree<>(-1);
 		parseMessage(fieldTree.rootNode, messageDescriptor, maxDepth - 1);
 		return fieldTree;
@@ -182,7 +181,7 @@ public class NumericFieldMaskUtil {
 		}
 	}
 
-	 static class Tree<T extends Comparable> {
+	static class Tree<T extends Comparable> {
 		public Node<T> rootNode;
 
 		public Tree(T rootData) {
@@ -246,8 +245,9 @@ public class NumericFieldMaskUtil {
 		}
 	}
 
-	 static class Node<T extends Comparable> {
+	static class Node<T extends Comparable> {
 		public T value;
+		public List<Node<T>> children = new ArrayList<>();
 
 		public Node(T value) {
 			this.value = value;
@@ -255,10 +255,12 @@ public class NumericFieldMaskUtil {
 
 		@Override
 		public boolean equals(Object o) {
-			if (this == o)
+			if (this == o) {
 				return true;
-			if (o == null || getClass() != o.getClass())
+			}
+			if (o == null || getClass() != o.getClass()) {
 				return false;
+			}
 			Node<?> node = (Node<?>) o;
 			return value.equals(node.value) && children.equals(node.children);
 		}
@@ -271,8 +273,6 @@ public class NumericFieldMaskUtil {
 		private int getMaxDept(int currentDept) {
 			return children.stream().map(e -> e.getMaxDept(currentDept + 1)).mapToInt(v -> v).max().orElse(currentDept);
 		}
-
-		public List<Node<T>> children = new ArrayList<>();
 
 		public void addChildPath(List<T> pathSegments) {
 			if (pathSegments.isEmpty()) {
