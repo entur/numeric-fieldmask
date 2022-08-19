@@ -82,13 +82,7 @@ public class NumericFieldMaskUtilTest {
 		assertContainsExact(sourceContextSubFieldInverted, "name", "fields", "oneofs", "options.value", "source_context", "syntax");
 	}
 
-	@Test
-	public void testCachingOfFieldMasks() {
-		FieldMask fieldMask = NumericFieldMaskUtil.allFields(Timestamp.class, Timestamp.getDescriptor());
-		assertNotNull(fieldMask);
-		assertTrue(NumericFieldMaskUtil.allFieldsMaskCache.containsKey(Timestamp.class));
 
-	}
 
 	private void assertContainsExact(FieldMask allFields, String... paths) {
 		Arrays.sort(paths);

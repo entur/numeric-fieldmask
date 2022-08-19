@@ -43,9 +43,15 @@ import java.util.stream.Stream;
 
 public class NumericFieldMaskUtil {
 
-	static final Map<Class, FieldMask> allFieldsMaskCache = new ConcurrentHashMap<>();
 	public static final String PATH_SEPARATOR = ".";
+	public static final String PATH_SEPARATOR_REGEX = "\\.";
 
+	/**
+	 * Convert a numeric field mask to a Google Protobuf fieldmask with fieldnames instead of fieldnumbers (ie "1.2" -> "rootMessage.subMessage")
+	 * @param protoDescriptor MessageDescriptor of root message that paths refer to
+	 * @param mask mask to process
+	 * @return standard fieldmask that can be used using FieldMaskUtil
+	 */
 	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, NumericFieldMask mask) {
 
 		FieldMask.Builder fieldMask = FieldMask.newBuilder();
@@ -80,7 +86,7 @@ public class NumericFieldMaskUtil {
 
 	private static String resolveNumericPath(String parentPath, String subPath, Descriptors.Descriptor messageDescriptor) {
 		if (subPath.contains(PATH_SEPARATOR)) {
-			String[] segments = subPath.split("\\.");
+			String[] segments = subPath.split(PATH_SEPARATOR_REGEX);
 			String parent = segments[0];
 			String sub = subPath.substring(subPath.indexOf(PATH_SEPARATOR) + 1);
 			Descriptors.FieldDescriptor fieldDescriptor = messageDescriptor.findFieldByNumber(Integer.valueOf(parent));
@@ -100,12 +106,15 @@ public class NumericFieldMaskUtil {
 
 	}
 
-	public static FieldMask allFields(Class<? extends GeneratedMessageV3> classTypeToMask, Descriptors.Descriptor protoDescriptor) {
-		// FieldMaskUtil.fromFieldNumbers uses reflection to find descriptor, avoid unnecessary calls
-		return allFieldsMaskCache.computeIfAbsent(classTypeToMask,
-				k -> FieldMaskUtil.fromFieldNumbers(k, protoDescriptor.getFields().stream().map(e -> e.getNumber()).collect(Collectors.toList())));
-	}
 
+	/**
+	 * Filter a message according to a NumericFieldMask
+	 * @param source message to filter
+	 * @param targetBuilder a builder for the target message (builder for source)
+	 * @param mask mask to apply
+	 * @return a filtered message. If mask is empty, source object is returned
+	 * @param <T> Protobuf parent message type (GeneratedMessageV3)
+	 */
 	public static <T extends GeneratedMessageV3> T copyRequestedFields(T source, GeneratedMessageV3.Builder targetBuilder, NumericFieldMask mask) {
 		if (isAllFields(mask)) {
 			// Optimization; if all fields requested return original object
@@ -117,7 +126,12 @@ public class NumericFieldMaskUtil {
 		}
 	}
 
-	private static boolean isAllFields(NumericFieldMask mask) {
+	/**
+	 * Checks if a mask indicates that all fields should be present.
+	 * @param mask
+	 * @return
+	 */
+	public static boolean isAllFields(NumericFieldMask mask) {
 		return mask.getInvertMask() && mask.getFieldNumberPathCount() == 0;
 	}
 
@@ -125,7 +139,7 @@ public class NumericFieldMaskUtil {
 		return protoDescriptor.findFieldByNumber(fieldNumber).getName();
 	}
 
-	public static String buildNestedPath(int... segments) {
+	 static String buildNestedPath(int... segments) {
 		String path = Arrays.stream(segments).mapToObj(i -> ((Integer) i).toString()).collect(Collectors.joining(PATH_SEPARATOR));
 		return path;
 	}
@@ -134,12 +148,12 @@ public class NumericFieldMaskUtil {
 		return Stream.of(segments).filter(value -> null != value).collect(Collectors.joining(PATH_SEPARATOR));
 	}
 
-	public static Tree<Integer> buildMaskTree(NumericFieldMask mask) {
+	 static Tree<Integer> buildMaskTree(NumericFieldMask mask) {
 
 		Tree<Integer> fieldTree = new Tree<>(-1);
 		List<String> fieldNumberPathList = mask.getFieldNumberPathList();
 		for (String path : fieldNumberPathList) {
-			String[] elements = path.split("\\.");
+			String[] elements = path.split(PATH_SEPARATOR_REGEX);
 
 
 			fieldTree.rootNode.addChildPath(Arrays.stream(elements).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList()));
@@ -148,7 +162,7 @@ public class NumericFieldMaskUtil {
 		return fieldTree;
 	}
 
-	public static Tree<Integer> buildMessageTree(Descriptors.Descriptor messageDescriptor, int maxDepth) {
+	 static Tree<Integer> buildMessageTree(Descriptors.Descriptor messageDescriptor, int maxDepth) {
 		Tree<Integer> fieldTree = new Tree<>(-1);
 		parseMessage(fieldTree.rootNode, messageDescriptor, maxDepth - 1);
 		return fieldTree;
@@ -168,7 +182,7 @@ public class NumericFieldMaskUtil {
 		}
 	}
 
-	public static class Tree<T extends Comparable> {
+	 static class Tree<T extends Comparable> {
 		public Node<T> rootNode;
 
 		public Tree(T rootData) {
@@ -232,7 +246,7 @@ public class NumericFieldMaskUtil {
 		}
 	}
 
-	public static class Node<T extends Comparable> {
+	 static class Node<T extends Comparable> {
 		public T value;
 
 		public Node(T value) {
