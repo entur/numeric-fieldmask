@@ -23,9 +23,11 @@ Use standard [FieldMaskUtil](https://developers.google.com/protocol-buffers/docs
 Proto definition:
 ```protobuf
 // Numeric field mask representing which top level fields should be returned by the server.
-// Mandatory: Create this field mask using field *numbers* from the proto descriptor in the generated code, not the field *name*
+// Mandatory: Create this field mask using field *numbers* from the proto descriptor 
+// in the generated code, not the field *name*
 message NumericFieldMask {
-  // Field number in message. Nested numbers allowed, use . to concatenate. Ie "1.2" will include the nested field number 2 in root message field 1
+  // Field number in message. Nested numbers allowed, use . to concatenate. 
+  // Ie "1.2" will include the nested field number 2 in root message field 1
   repeated string field_number_path = 1;
   // Invert listed field paths instead of explicitly include them
   bool invert_mask = 2;
