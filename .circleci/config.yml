@@ -10,12 +10,12 @@ aliases:
        echo "Start release"
        git config --global user.email "circleci@entur.no"
        git config --global user.name "circleci"
-       git checkout -B main origin/main
+       git checkout -B master origin/master
        git pull --no-edit
        git checkout develop
        mvn versions:use-releases
        mvn gitflow:release-start gitflow:release-finish -Prelease -DpostReleaseGoals=deploy -DargLine='-Prelease -DskipTests' -B
-       git checkout main
+       git checkout master
        git pull --no-edit
        mvn deploy -DskipTests -Pentur-maven-central-local
     fi
