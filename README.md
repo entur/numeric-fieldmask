@@ -23,9 +23,11 @@ Use standard [FieldMaskUtil](https://developers.google.com/protocol-buffers/docs
 Proto definition:
 ```protobuf
 // Numeric field mask representing which top level fields should be returned by the server.
-// Mandatory: Create this field mask using field *numbers* from the proto descriptor in the generated code, not the field *name*
+// Mandatory: Create this field mask using field *numbers* from the proto descriptor 
+// in the generated code, not the field *name*
 message NumericFieldMask {
-  // Field number in message. Nested numbers allowed, use . to concatenate. Ie "1.2" will include the nested field number 2 in root message field 1
+  // Field number in message. Nested numbers allowed, use . to concatenate. 
+  // Ie "1.2" will include the nested field number 2 in root message field 1
   repeated string field_number_path = 1;
   // Invert listed field paths instead of explicitly include them
   bool invert_mask = 2;
@@ -37,8 +39,9 @@ Example single level mask:
 ```java
 FieldMask onlySeconds = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
         NumericFieldMask.newBuilder()
-        .setInvertMask(true) // Invert mask - exclude listed fields
-        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER)) // Add field to include/exclude
+        .setInvertMask(true) // Invert mask
+        .addFieldNumberPath(
+          NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER)) // Add field to include/exclude
         .build());
 ```
 
@@ -47,6 +50,7 @@ Example multilevel level mask:
 ```java
 FieldMask onlySeconds = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
     NumericFieldMask.newBuilder()
-        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(level1_fieldNumber, level2_fieldNumber, level3_fieldNumber ...)) 
+        .addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(level1_fieldNumber, 
+          level2_fieldNumber, level3_fieldNumber ...)) 
         .build());
 ```
