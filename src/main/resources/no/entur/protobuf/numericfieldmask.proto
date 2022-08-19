@@ -4,6 +4,7 @@ package no.entur.protobuf;
 
 option java_multiple_files = true;
 option java_outer_classname="NumericMask";
+option go_package = "github.com/entur/abt-protobuf-go/v2/no/entur/protobuf";
 
 // Numeric field mask representing which top level fields should be returned by the server.
 // Mandatory: Create this field mask using field *numbers* from the proto descriptor in the generated code, not the field *name*
