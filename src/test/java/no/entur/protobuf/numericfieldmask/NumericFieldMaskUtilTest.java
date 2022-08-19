@@ -38,10 +38,10 @@ import com.google.protobuf.Timestamp;
 
 import no.entur.protobuf.NumericFieldMask;
 
-public class NumericFieldMaskUtilTest {
+class NumericFieldMaskUtilTest {
 
 	@Test
-	public void testToFieldMaskSingleLevel() {
+	void testToFieldMaskSingleLevel() {
 		FieldMask allFields = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().setInvertMask(true).build());
 		assertContainsExact(allFields, "seconds", "nanos");
 
@@ -61,7 +61,7 @@ public class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	public void testToFieldMaskNested() {
+	void testToFieldMaskNested() {
 		FieldMask sourceContextSubField = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("4.1").addFieldNumberPath("5.1").build());
 		assertContainsExact(sourceContextSubField, "options.name", "source_context.file_name");
@@ -69,14 +69,14 @@ public class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	public void testToFieldMaskNestedInverted_thenRemoveParent() {
+	void testToFieldMaskNestedInverted_thenRemoveParent() {
 		FieldMask sourceContextSubFieldInverted = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("5.1").addFieldNumberPath("4.1").addFieldNumberPath("4.2").setInvertMask(true).build());
 		assertContainsExact(sourceContextSubFieldInverted, "fields", "name", "oneofs", "syntax");
 	}
 
 	@Test
-	public void testToFieldMaskNestedInverted_whenParentHasRemainingChildren_thenKeepParent() {
+	void testToFieldMaskNestedInverted_whenParentHasRemainingChildren_thenKeepParent() {
 		FieldMask sourceContextSubFieldInverted = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("4.1").setInvertMask(true).build());
 		assertContainsExact(sourceContextSubFieldInverted, "name", "fields", "oneofs", "options.value", "source_context", "syntax");
@@ -92,7 +92,7 @@ public class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	public void testParseMaskToTree() {
+	void testParseMaskToTree() {
 
 		NumericFieldMask mask = NumericFieldMask.newBuilder()
 				.addFieldNumberPath("1")
@@ -103,52 +103,52 @@ public class NumericFieldMaskUtilTest {
 
 		NumericFieldMaskUtil.Tree<Integer> tree = NumericFieldMaskUtil.buildMaskTree(mask);
 
-		assertEquals(3, tree.rootNode.children.size());
-		assertEquals(tree.rootNode.children.get(0).children.size(), 1);
-		assertEquals(tree.rootNode.children.get(0).children.get(0).value, 1);
-		assertEquals(tree.rootNode.children.get(1).children.size(), 1);
-		assertEquals(tree.rootNode.children.get(1).children.get(0).value, 2);
-		assertEquals(tree.rootNode.children.get(2).children.size(), 1);
-		assertEquals(tree.rootNode.children.get(2).children.get(0).value, 3);
-		assertEquals(tree.rootNode.children.get(2).children.get(0).children.get(0).value, 1);
+		assertEquals(3, tree.getRootNode().getChildren().size());
+		assertEquals(1, tree.getRootNode().getChildren().get(0).getChildren().size());
+		assertEquals(1, tree.getRootNode().getChildren().get(0).getChildren().get(0).getValue());
+		assertEquals(1, tree.getRootNode().getChildren().get(1).getChildren().size());
+		assertEquals(2, tree.getRootNode().getChildren().get(1).getChildren().get(0).getValue());
+		assertEquals(1, tree.getRootNode().getChildren().get(2).getChildren().size());
+		assertEquals(3, tree.getRootNode().getChildren().get(2).getChildren().get(0).getValue());
+		assertEquals(1, tree.getRootNode().getChildren().get(2).getChildren().get(0).getChildren().get(0).getValue());
 
 	}
 
 	@Test
-	public void testParseMessageToTreeSingleLevel() {
+	void testParseMessageToTreeSingleLevel() {
 
 		int maxDepth = 1;
 
 		NumericFieldMaskUtil.Tree<Integer> tree = NumericFieldMaskUtil.buildMessageTree(com.google.protobuf.Type.getDescriptor(), maxDepth);
 
-		assertEquals(6, tree.rootNode.children.size());
+		assertEquals(6, tree.getRootNode().getChildren().size());
 		for (int i = 0; i < 6; i++) {
-			assertEquals(0, tree.rootNode.children.get(i).children.size());
+			assertEquals(0, tree.getRootNode().getChildren().get(i).getChildren().size());
 
 		}
 		assertEquals(maxDepth, tree.getMaxDept());
 	}
 
 	@Test
-	public void testParseMessageToTreeTwoLevel() {
+	void testParseMessageToTreeTwoLevel() {
 
 		int maxDepth = 2;
 
 		NumericFieldMaskUtil.Tree<Integer> tree = NumericFieldMaskUtil.buildMessageTree(com.google.protobuf.Type.getDescriptor(), maxDepth);
 
-		assertEquals(6, tree.rootNode.children.size());
-		assertEquals(0, tree.rootNode.children.get(0).children.size()); // name
-		assertEquals(10, tree.rootNode.children.get(1).children.size()); // fields
-		assertEquals(0, tree.rootNode.children.get(2).children.size()); // oneofs
-		assertEquals(2, tree.rootNode.children.get(3).children.size()); // options
-		assertEquals(1, tree.rootNode.children.get(4).children.size()); // source_context
-		assertEquals(0, tree.rootNode.children.get(5).children.size()); // syntax
+		assertEquals(6, tree.getRootNode().getChildren().size());
+		assertEquals(0, tree.getRootNode().getChildren().get(0).getChildren().size()); // name
+		assertEquals(10, tree.getRootNode().getChildren().get(1).getChildren().size()); // fields
+		assertEquals(0, tree.getRootNode().getChildren().get(2).getChildren().size()); // oneofs
+		assertEquals(2, tree.getRootNode().getChildren().get(3).getChildren().size()); // options
+		assertEquals(1, tree.getRootNode().getChildren().get(4).getChildren().size()); // source_context
+		assertEquals(0, tree.getRootNode().getChildren().get(5).getChildren().size()); // syntax
 
 		assertEquals(maxDepth, tree.getMaxDept());
 	}
 
 	@Test
-	public void testStringSorting() {
+	void testStringSorting() {
 		List<String> list = new ArrayList<>();
 		list.add("1");
 		list.add("2");
@@ -161,11 +161,11 @@ public class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	public void testToMask() {
+	void testToMask() {
 		NumericFieldMaskUtil.Tree<Integer> tree = new NumericFieldMaskUtil.Tree<>(-1);
-		tree.rootNode.addChildPath(new ArrayList<>(List.of(1))); // Wrap in ArrayList to allow modifications
-		tree.rootNode.addChildPath(new ArrayList<>(List.of(2))); // Wrap in ArrayList to allow modifications
-		tree.rootNode.addChildPath(new ArrayList<>(List.of(3))); // Wrap in ArrayList to allow modifications
+		tree.getRootNode().addChildPath(new ArrayList<>(List.of(1))); // Wrap in ArrayList to allow modifications
+		tree.getRootNode().addChildPath(new ArrayList<>(List.of(2))); // Wrap in ArrayList to allow modifications
+		tree.getRootNode().addChildPath(new ArrayList<>(List.of(3))); // Wrap in ArrayList to allow modifications
 		NumericFieldMask numericFieldMask = tree.toMask();
 		assertEquals(3, numericFieldMask.getFieldNumberPathCount());
 
