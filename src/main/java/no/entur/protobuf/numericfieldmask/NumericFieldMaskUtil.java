@@ -147,7 +147,13 @@ public class NumericFieldMaskUtil {
 		return protoDescriptor.findFieldByNumber(fieldNumber).getName();
 	}
 
-	static String buildNestedPath(int... segments) {
+	/**
+	 * Builds a numeric field path by listing nested fields
+	 * 
+	 * @param segments field numbers for full path, ie parent,child,grandchild as 1,2,3)
+	 * @return a numeric field path in the form "1.2.3"
+	 */
+	public static String buildNestedPath(int... segments) {
 		return Arrays.stream(segments).mapToObj(i -> ((Integer) i).toString()).collect(Collectors.joining(PATH_SEPARATOR));
 	}
 
