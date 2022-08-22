@@ -23,20 +23,19 @@ package no.entur.protobuf.numericfieldmask;
  * #L%
  */
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.Timestamp;
+import com.google.protobuf.util.FieldMaskUtil;
+import no.entur.protobuf.NumericFieldMask;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import com.google.protobuf.FieldMask;
-import com.google.protobuf.Timestamp;
-
-import no.entur.protobuf.NumericFieldMask;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NumericFieldMaskUtilTest {
 
@@ -50,6 +49,7 @@ class NumericFieldMaskUtilTest {
 						.setInvertMask(true)
 						.addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER))
 						.build());
+		assertTrue(FieldMaskUtil.isValid(Timestamp.getDescriptor(), onlySeconds));
 		assertContainsExact(onlySeconds, "seconds");
 
 		FieldMask onlyNano = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(),
@@ -57,14 +57,16 @@ class NumericFieldMaskUtilTest {
 						.setInvertMask(false)
 						.addFieldNumberPath(NumericFieldMaskUtil.buildNestedPath(Timestamp.NANOS_FIELD_NUMBER))
 						.build());
+		assertTrue(FieldMaskUtil.isValid(Timestamp.getDescriptor(), onlyNano));
 		assertContainsExact(onlyNano, "nanos");
 	}
 
 	@Test
 	void testToFieldMaskNested() {
 		FieldMask sourceContextSubField = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
-				NumericFieldMask.newBuilder().addFieldNumberPath("4.1").addFieldNumberPath("5.1").build());
-		assertContainsExact(sourceContextSubField, "options.name", "source_context.file_name");
+				NumericFieldMask.newBuilder().addFieldNumberPath("5.1").build());
+		assertTrue(FieldMaskUtil.isValid(com.google.protobuf.Type.getDescriptor(), sourceContextSubField));
+		assertContainsExact(sourceContextSubField, "source_context.file_name");
 
 	}
 
@@ -72,14 +74,8 @@ class NumericFieldMaskUtilTest {
 	void testToFieldMaskNestedInverted_thenRemoveParent() {
 		FieldMask sourceContextSubFieldInverted = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("5.1").addFieldNumberPath("4.1").addFieldNumberPath("4.2").setInvertMask(true).build());
+		assertTrue(FieldMaskUtil.isValid(com.google.protobuf.Type.getDescriptor(), sourceContextSubFieldInverted));
 		assertContainsExact(sourceContextSubFieldInverted, "fields", "name", "oneofs", "syntax");
-	}
-
-	@Test
-	void testToFieldMaskNestedInverted_whenParentHasRemainingChildren_thenKeepParent() {
-		FieldMask sourceContextSubFieldInverted = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
-				NumericFieldMask.newBuilder().addFieldNumberPath("4.1").setInvertMask(true).build());
-		assertContainsExact(sourceContextSubFieldInverted, "name", "fields", "oneofs", "options.value", "source_context", "syntax");
 	}
 
 	private void assertContainsExact(FieldMask allFields, String... paths) {

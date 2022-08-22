@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.entur.protobuf</groupId>
     <artifactId>numeric-fieldmask</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <packaging>jar</packaging>
     <name>Numeric field mask for protobuf</name>
     <description>Alternative to standard protobuf field masks - based on fieldnumbers instead of fieldnames</description>
