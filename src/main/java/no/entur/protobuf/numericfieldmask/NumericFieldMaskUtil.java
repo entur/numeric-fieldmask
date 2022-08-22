@@ -22,6 +22,13 @@
  */
 package no.entur.protobuf.numericfieldmask;
 
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.Message;
+import com.google.protobuf.util.FieldMaskUtil;
+import no.entur.protobuf.NumericFieldMask;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,14 +40,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.FieldMask;
-import com.google.protobuf.GeneratedMessageV3;
-import com.google.protobuf.Message;
-import com.google.protobuf.util.FieldMaskUtil;
-
-import no.entur.protobuf.NumericFieldMask;
 
 public class NumericFieldMaskUtil {
 
@@ -55,7 +54,8 @@ public class NumericFieldMaskUtil {
 	 * 
 	 * @param protoDescriptor MessageDescriptor of root message that paths refer to
 	 * @param mask            mask to process
-	 * @return standard fieldmask that can be used using FieldMaskUtil
+	 * @return standard fieldmask that can be used using FieldMaskUtil. NB make sure returned FieldMask is valid by testing against
+	 *         FieldMaskUtil.isValid(protoDescriptor,<returned FieldMask>)
 	 */
 	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) {
 		return maskCache.computeIfAbsent(new CacheKey(protoDescriptor.getFullName(), mask), e -> {
@@ -74,6 +74,18 @@ public class NumericFieldMaskUtil {
 			return FieldMaskUtil.normalize(fieldMask.build());
 		});
 
+	}
+
+	/**
+	 * Verify that a NumericFieldMask is valid. This is done by converting it to a standard FieldMask and verifying with FieldMaskUtil
+	 * 
+	 * @param protoDescriptor descriptor of root message
+	 * @param mask            mask to process
+	 * @return true if valid, false otherwise
+	 */
+	public static boolean isValid(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) {
+		FieldMask fieldMask = toFieldMask(protoDescriptor, mask);
+		return FieldMaskUtil.isValid(protoDescriptor, fieldMask);
 	}
 
 	private static NumericFieldMask invertMask(Descriptors.Descriptor messageDescriptor, NumericFieldMask mask) {
@@ -128,7 +140,11 @@ public class NumericFieldMaskUtil {
 		} else {
 			Message.Builder builder = source.newBuilderForType();
 			FieldMask requestedFieldMask = toFieldMask(source.getDescriptorForType(), mask);
-			FieldMaskUtil.merge(requestedFieldMask, source, builder);
+			FieldMaskUtil.MergeOptions options = new FieldMaskUtil.MergeOptions();
+			options.setReplaceRepeatedFields(true);
+			options.setReplacePrimitiveFields(true);
+			options.setReplaceMessageFields(true);
+			FieldMaskUtil.merge(requestedFieldMask, source, builder, options);
 			return (T) builder.build();
 		}
 	}
