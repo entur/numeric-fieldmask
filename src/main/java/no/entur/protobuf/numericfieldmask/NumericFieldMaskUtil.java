@@ -88,6 +88,13 @@ public class NumericFieldMaskUtil {
 		return FieldMaskUtil.isValid(protoDescriptor, fieldMask);
 	}
 
+	/**
+	 * Invert a field mask
+	 * 
+	 * @param messageDescriptor root message descriptor
+	 * @param mask              mask that is to be inverted
+	 * @return a field mask listing all fields except the ones specified in the input mask
+	 */
 	private static NumericFieldMask invertMask(Descriptors.Descriptor messageDescriptor, NumericFieldMask mask) {
 		NumericFieldMask.Builder invertedMask = NumericFieldMask.newBuilder();
 		if (mask.getFieldNumberPathCount() == 0) {
