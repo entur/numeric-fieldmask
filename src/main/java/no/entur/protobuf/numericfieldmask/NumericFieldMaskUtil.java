@@ -33,11 +33,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +46,7 @@ public class NumericFieldMaskUtil {
 	public static final String PATH_SEPARATOR = ".";
 	public static final String PATH_SEPARATOR_REGEX = "\\.";
 
-	private static final Map<CacheKey, FieldMask> maskCache = new HashMap<>();
+	private static final Map<CacheKey, FieldMask> maskCache = new ConcurrentHashMap<>();
 
 	/**
 	 * Convert a numeric field mask to a Google Protobuf fieldmask with fieldnames instead of fieldnumbers (ie "1.2" -> "rootMessage.subMessage") FieldMask is
