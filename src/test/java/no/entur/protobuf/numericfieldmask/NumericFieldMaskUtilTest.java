@@ -25,6 +25,7 @@ package no.entur.protobuf.numericfieldmask;
 
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Timestamp;
+import com.google.protobuf.Type;
 import com.google.protobuf.util.FieldMaskUtil;
 import no.entur.protobuf.NumericFieldMask;
 import org.junit.jupiter.api.Test;
@@ -35,12 +36,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NumericFieldMaskUtilTest {
 
 	@Test
-	void testToFieldMaskSingleLevel() {
+	void testToFieldMaskSingleLevel() throws InvalidFieldMaskException {
 		FieldMask allFields = NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().setInvertMask(true).build());
 		assertContainsExact(allFields, "seconds", "nanos");
 
@@ -62,7 +64,7 @@ class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	void testToFieldMaskNested() {
+	void testToFieldMaskNested() throws InvalidFieldMaskException {
 		FieldMask sourceContextSubField = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("5.1").build());
 		assertTrue(FieldMaskUtil.isValid(com.google.protobuf.Type.getDescriptor(), sourceContextSubField));
@@ -71,7 +73,7 @@ class NumericFieldMaskUtilTest {
 	}
 
 	@Test
-	void testToFieldMaskNestedInverted_thenRemoveParent() {
+	void testToFieldMaskNestedInverted_thenRemoveParent() throws InvalidFieldMaskException {
 		FieldMask sourceContextSubFieldInverted = NumericFieldMaskUtil.toFieldMask(com.google.protobuf.Type.getDescriptor(),
 				NumericFieldMask.newBuilder().addFieldNumberPath("5.1").addFieldNumberPath("4.1").addFieldNumberPath("4.2").setInvertMask(true).build());
 		assertTrue(FieldMaskUtil.isValid(com.google.protobuf.Type.getDescriptor(), sourceContextSubFieldInverted));
@@ -167,4 +169,25 @@ class NumericFieldMaskUtilTest {
 
 	}
 
+	@Test
+	public void testInvalidFieldNumbers() {
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("3").build()));
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Type.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("3.13").build()));
+	}
+
+	@Test
+	public void testInvalidSyntax() {
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("seconds").build()));
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("nanos").build()));
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("seconds.nanos").build()));
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("1.").build()));
+		assertThrows(InvalidFieldMaskException.class,
+				() -> NumericFieldMaskUtil.toFieldMask(Timestamp.getDescriptor(), NumericFieldMask.newBuilder().addFieldNumberPath("1..").build()));
+	}
 }
