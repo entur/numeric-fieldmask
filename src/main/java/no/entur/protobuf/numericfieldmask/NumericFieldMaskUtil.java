@@ -57,8 +57,11 @@ public class NumericFieldMaskUtil {
 	 * @return standard fieldmask that can be used using FieldMaskUtil. NB make sure returned FieldMask is valid by testing against
 	 *         FieldMaskUtil.isValid(protoDescriptor,<returned FieldMask>)
 	 */
-	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) {
-		return maskCache.computeIfAbsent(new CacheKey(protoDescriptor.getFullName(), mask), e -> {
+	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) throws InvalidFieldMaskException {
+		CacheKey cacheKey = new CacheKey(protoDescriptor.getFullName(), mask);
+		if (!maskCache.containsKey(cacheKey)) {
+			verifySyntax(mask);
+
 			FieldMask.Builder fieldMask = FieldMask.newBuilder();
 			NumericFieldMask maskToUse = mask;
 			if (mask.getInvertMask()) {
@@ -71,9 +74,33 @@ public class NumericFieldMaskUtil {
 			}
 
 			// Remove redundant fields etc
-			return FieldMaskUtil.normalize(fieldMask.build());
-		});
+			FieldMask convertedMask = FieldMaskUtil.normalize(fieldMask.build());
+			if (FieldMaskUtil.isValid(protoDescriptor, convertedMask)) {
+				maskCache.put(cacheKey, convertedMask);
+				return convertedMask;
+			} else {
+				throw new InvalidFieldMaskException("Mask is invalid. Check field numbers");
+			}
+		} else {
+			return maskCache.get(cacheKey);
+		}
 
+	}
+
+	private static void verifySyntax(NumericFieldMask mask) throws InvalidFieldMaskException {
+		for (String path : mask.getFieldNumberPathList()) {
+			String[] segments = path.split(PATH_SEPARATOR_REGEX);
+			if (segments.length == 0) {
+				throw new InvalidFieldMaskException(String.format("Path '%s' is invalid. Pattern should be <number>[<dot><number>].. ie '1.2'", path));
+			}
+			for (String segment : segments) {
+				try {
+					Integer.parseInt(segment);
+				} catch (NumberFormatException e) {
+					throw new InvalidFieldMaskException(String.format("Segment '%s' in path '%s' is not a number", segment, path));
+				}
+			}
+		}
 	}
 
 	/**
@@ -82,10 +109,26 @@ public class NumericFieldMaskUtil {
 	 * @param protoDescriptor descriptor of root message
 	 * @param mask            mask to process
 	 * @return true if valid, false otherwise
+	 * @deprecated
 	 */
 	public static boolean isValid(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) {
-		FieldMask fieldMask = toFieldMask(protoDescriptor, mask);
-		return FieldMaskUtil.isValid(protoDescriptor, fieldMask);
+		try {
+			toFieldMask(protoDescriptor, mask);
+			return true;
+		} catch (InvalidFieldMaskException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Verify that a NumericFieldMask is valid. This is done by converting it to a standard FieldMask and verifying with FieldMaskUtil
+	 * 
+	 * @param protoDescriptor descriptor of root message
+	 * @param mask            mask to process
+	 * @throws InvalidFieldMaskException if field mask is invalid
+	 */
+	public static void checkValid(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) throws InvalidFieldMaskException {
+		toFieldMask(protoDescriptor, mask);
 	}
 
 	/**
@@ -111,22 +154,24 @@ public class NumericFieldMaskUtil {
 
 	}
 
-	private static String resolveNumericPath(String parentPath, String subPath, Descriptors.Descriptor messageDescriptor) {
+	private static String resolveNumericPath(String parentPath, String subPath, Descriptors.Descriptor messageDescriptor) throws InvalidFieldMaskException {
 		if (subPath.contains(PATH_SEPARATOR)) {
 			String[] segments = subPath.split(PATH_SEPARATOR_REGEX);
 			String parent = segments[0];
 			String sub = subPath.substring(subPath.indexOf(PATH_SEPARATOR) + 1);
 			Descriptors.FieldDescriptor fieldDescriptor = messageDescriptor.findFieldByNumber(Integer.valueOf(parent));
+			if (fieldDescriptor == null) {
+				throw new InvalidFieldMaskException(String.format("Field number %s does not exist in message %s", parent, messageDescriptor.getFullName()));
+			}
 			if (fieldDescriptor.getType() == Descriptors.FieldDescriptor.Type.MESSAGE) {
 				Descriptors.Descriptor subMessageDescriptor = fieldDescriptor.getMessageType();
 				String newParentPath = buildNestedPath(parentPath, parent);
 				return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(parent)), resolveNumericPath(newParentPath, sub, subMessageDescriptor));
 			} else {
-				// Not a message type to follow
-				return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(parent)));
+				throw new InvalidFieldMaskException(String.format("Field number %s/%s in %s does not have any child field path %s", parent,
+						fieldDescriptor.getName(), messageDescriptor.getFullName(), sub));
 			}
 		} else {
-
 			return buildNestedPath(toFieldName(messageDescriptor, Integer.parseInt(subPath)));
 		}
 
@@ -140,7 +185,7 @@ public class NumericFieldMaskUtil {
 	 * @return a filtered message. If mask is empty, source object is returned
 	 * @param <T> Protobuf parent message type (GeneratedMessageV3)
 	 */
-	public static <T extends GeneratedMessageV3> T copyRequestedFields(T source, NumericFieldMask mask) {
+	public static <T extends GeneratedMessageV3> T copyRequestedFields(T source, NumericFieldMask mask) throws InvalidFieldMaskException {
 		if (isAllFields(mask)) {
 			// Optimization; if all fields requested return original object
 			return source;
@@ -166,8 +211,13 @@ public class NumericFieldMaskUtil {
 		return mask.getInvertMask() && mask.getFieldNumberPathCount() == 0;
 	}
 
-	private static String toFieldName(Descriptors.Descriptor protoDescriptor, int fieldNumber) {
-		return protoDescriptor.findFieldByNumber(fieldNumber).getName();
+	private static String toFieldName(Descriptors.Descriptor protoDescriptor, int fieldNumber) throws InvalidFieldMaskException {
+		Descriptors.FieldDescriptor fieldByNumber = protoDescriptor.findFieldByNumber(fieldNumber);
+		if (fieldByNumber != null) {
+			return fieldByNumber.getName();
+		} else {
+			throw new InvalidFieldMaskException(String.format("Field number %d does not exist in %s", fieldNumber, protoDescriptor.getFullName()));
+		}
 	}
 
 	/**
