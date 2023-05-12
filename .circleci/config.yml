@@ -184,7 +184,7 @@ jobs:
         - dep-cache-base
     - run: *release
 orbs:
-  queue: eddiewebb/queue@1.8.4
+  queue: eddiewebb/queue@1.12.0
 
 workflows:
   version: 2
