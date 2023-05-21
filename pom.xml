@@ -11,7 +11,7 @@
         <junit.jupiter.version>5.9.3</junit.jupiter.version>
         <junit.platform.version>1.9.3</junit.platform.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
