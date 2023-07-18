@@ -20,7 +20,7 @@
         <protobuf-maven-plugin.version>0.7.1</protobuf-maven-plugin.version>
         <protobuf.java.version>3.19.1</protobuf.java.version>
         <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
-        <spotless.version>2.37.0</spotless.version>
+        <spotless.version>2.38.0</spotless.version>
     </properties>
     <dependencies>
         <dependency>
