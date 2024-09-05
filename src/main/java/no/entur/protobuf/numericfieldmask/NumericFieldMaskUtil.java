@@ -22,13 +22,6 @@
  */
 package no.entur.protobuf.numericfieldmask;
 
-import com.google.protobuf.Descriptors;
-import com.google.protobuf.FieldMask;
-import com.google.protobuf.GeneratedMessageV3;
-import com.google.protobuf.Message;
-import com.google.protobuf.util.FieldMaskUtil;
-import no.entur.protobuf.NumericFieldMask;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,6 +33,14 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.google.protobuf.Descriptors;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.Message;
+import com.google.protobuf.util.FieldMaskUtil;
+
+import no.entur.protobuf.NumericFieldMask;
 
 public class NumericFieldMaskUtil {
 

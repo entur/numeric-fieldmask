@@ -95,7 +95,7 @@ aliases:
 
 - &java-container-config
   docker:
-  - image: circleci/openjdk:11-jdk
+  - image: cimg/openjdk:17.0
     auth:
       username: $DOCKERHUB_LOGIN
       password: $DOCKERHUB_PASSWORD
@@ -184,7 +184,7 @@ jobs:
         - dep-cache-base
     - run: *release
 orbs:
-  queue: eddiewebb/queue@volatile
+  queue: eddiewebb/queue@1.12.0
 
 workflows:
   version: 2
