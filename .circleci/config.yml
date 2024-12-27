@@ -211,9 +211,6 @@ workflows:
         time: '30'
         circleci-api-key: CIRCLE_API_USER_TOKEN
         context: global
-        branches:
-          ignore:
-            - master
     - test:
         context: global
         requires:
