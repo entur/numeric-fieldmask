@@ -183,7 +183,7 @@ public class NumericFieldMaskUtil {
 	 * @param source message to filter
 	 * @param mask   mask to apply
 	 * @return a filtered message. If mask is empty, source object is returned
-	 * @param <T> Protobuf parent message type (GeneratedMessageV3)
+	 * @param <T> Protobuf parent message type (Message)
 	 */
 	public static <T extends Message> T copyRequestedFields(T source, NumericFieldMask mask) throws InvalidFieldMaskException {
 		if (isAllFields(mask)) {
