@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.FieldMask;
-import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.FieldMaskUtil;
 
@@ -52,7 +51,7 @@ public class NumericFieldMaskUtil {
 	/**
 	 * Convert a numeric field mask to a Google Protobuf fieldmask with fieldnames instead of fieldnumbers (ie "1.2" -> "rootMessage.subMessage") FieldMask is
 	 * cached after computing the first time
-	 * 
+	 *
 	 * @param protoDescriptor MessageDescriptor of root message that paths refer to
 	 * @param mask            mask to process
 	 * @return standard fieldmask that can be used using FieldMaskUtil. NB make sure returned FieldMask is valid by testing against
@@ -106,7 +105,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Verify that a NumericFieldMask is valid. This is done by converting it to a standard FieldMask and verifying with FieldMaskUtil
-	 * 
+	 *
 	 * @param protoDescriptor descriptor of root message
 	 * @param mask            mask to process
 	 * @return true if valid, false otherwise
@@ -123,7 +122,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Verify that a NumericFieldMask is valid. This is done by converting it to a standard FieldMask and verifying with FieldMaskUtil
-	 * 
+	 *
 	 * @param protoDescriptor descriptor of root message
 	 * @param mask            mask to process
 	 * @throws InvalidFieldMaskException if field mask is invalid
@@ -134,7 +133,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Invert a field mask
-	 * 
+	 *
 	 * @param messageDescriptor root message descriptor
 	 * @param mask              mask that is to be inverted
 	 * @return a field mask listing all fields except the ones specified in the input mask
@@ -180,13 +179,13 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Filter a message according to a NumericFieldMask
-	 * 
+	 *
 	 * @param source message to filter
 	 * @param mask   mask to apply
 	 * @return a filtered message. If mask is empty, source object is returned
-	 * @param <T> Protobuf parent message type (GeneratedMessageV3)
+	 * @param <T> Protobuf parent message type (Message)
 	 */
-	public static <T extends GeneratedMessageV3> T copyRequestedFields(T source, NumericFieldMask mask) throws InvalidFieldMaskException {
+	public static <T extends Message> T copyRequestedFields(T source, NumericFieldMask mask) throws InvalidFieldMaskException {
 		if (isAllFields(mask)) {
 			// Optimization; if all fields requested return original object
 			return source;
@@ -204,7 +203,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Checks if a mask indicates that all fields should be present.
-	 * 
+	 *
 	 * @param mask
 	 * @return
 	 */
@@ -223,7 +222,7 @@ public class NumericFieldMaskUtil {
 
 	/**
 	 * Builds a numeric field path by listing nested fields
-	 * 
+	 *
 	 * @param segments field numbers for full path, ie parent,child,grandchild as 1,2,3)
 	 * @return a numeric field path in the form "1.2.3"
 	 */
