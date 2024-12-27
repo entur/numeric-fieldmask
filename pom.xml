@@ -3,20 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.entur.protobuf</groupId>
     <artifactId>numeric-fieldmask</artifactId>
-    <version>1.2.9</version>
+    <version>1.2.10</version>
     <packaging>jar</packaging>
     <name>Numeric field mask for protobuf</name>
     <description>Alternative to standard protobuf field masks - based on fieldnumbers instead of fieldnames</description>
     <properties>
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
-        <junit.platform.version>1.10.2</junit.platform.version>
-        <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+        <junit.jupiter.version>5.11.4</junit.jupiter.version>
+        <junit.platform.version>1.11.4</junit.platform.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <proto.version>3.25.3</proto.version>
+        <proto.version>3.25.5</proto.version>
         <protobuf-maven-plugin.version>0.7.1</protobuf-maven-plugin.version>
         <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
         <spotless.version>2.43.0</spotless.version>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.google.api.grpc</groupId>
             <artifactId>proto-google-common-protos</artifactId>
-            <version>2.39.0</version>
+            <version>2.50.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -107,14 +107,14 @@
                     <dependency>
                         <groupId>no.entur</groupId>
                         <artifactId>abt-codestyle</artifactId>
-                        <version>0.33</version>
+                        <version>0.36</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.5.2</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <excludes>
@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>2.4.0</version>
+                <version>2.5.0</version>
                 <configuration>
                     <organizationName>Entur</organizationName>
                     <inceptionYear>2022</inceptionYear>
@@ -166,7 +166,7 @@
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
                 <artifactId>sortpom-maven-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>4.0.0</version>
                 <configuration>
                     <predefinedSortOrder>custom_1</predefinedSortOrder>
                     <nrOfIndentSpace>4</nrOfIndentSpace>
@@ -282,7 +282,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.4</version>
+                        <version>3.2.7</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
