@@ -16,7 +16,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <proto.version>3.25.5</proto.version>
+        <proto.version>4.29.3</proto.version>
         <protobuf-maven-plugin.version>0.7.1</protobuf-maven-plugin.version>
         <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
         <spotless.version>2.44.0</spotless.version>
