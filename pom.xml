@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.entur.protobuf</groupId>
     <artifactId>numeric-fieldmask</artifactId>
-    <version>1.2.11-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Numeric field mask for protobuf</name>
     <description>Alternative to standard protobuf field masks - based on fieldnumbers instead of fieldnames</description>
@@ -102,14 +102,6 @@
                     </java>
                     <encoding>UTF-8</encoding>
                 </configuration>
-                <dependencies>
-                    <!-- NOTE not publicly available artifact -->
-                    <dependency>
-                        <groupId>no.entur</groupId>
-                        <artifactId>abt-codestyle</artifactId>
-                        <version>0.36</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -151,17 +143,6 @@
                         <phase>initialize</phase>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.21.0</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <commitMessagePrefix>[ci skip]</commitMessagePrefix>
-                    <allowSnapshots>false</allowSnapshots>
-                    <skipTestProject>true</skipTestProject>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
@@ -259,19 +240,6 @@
         </snapshotRepository>
     </distributionManagement>
     <profiles>
-        <profile>
-            <id>entur-maven-central-local</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <distributionManagement>
-                <repository>
-                    <id>entur-maven-central-local</id>
-                    <name>Entur maven central local</name>
-                    <url>https://entur2.jfrog.io/entur2/entur-maven-central-release-local</url>
-                </repository>
-            </distributionManagement>
-        </profile>
         <profile>
             <id>release</id>
             <activation>
