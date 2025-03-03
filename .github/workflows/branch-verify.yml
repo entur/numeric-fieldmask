@@ -11,4 +11,4 @@ jobs:
     secrets: inherit
     with:
       server-id: entur-partner
-      java-version: 17
+      java-version: 21
