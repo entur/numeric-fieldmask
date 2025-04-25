@@ -23,7 +23,7 @@ package no.entur.protobuf.numericfieldmask;
  * #L%
  */
 
-public class InvalidFieldMaskException extends Exception {
+public class InvalidFieldMaskException extends RuntimeException {
 	public InvalidFieldMaskException(String message) {
 		super(message);
 	}
