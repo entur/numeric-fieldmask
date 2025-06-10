@@ -17,7 +17,7 @@
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <proto.version>3.25.6</proto.version>
-        <protobuf-maven-plugin.version>0.7.1</protobuf-maven-plugin.version>
+        <protobuf-maven-plugin.version>3.2.1</protobuf-maven-plugin.version>
         <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
         <spotless.version>2.44.2</spotless.version>
     </properties>
@@ -181,18 +181,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>dev.cookiecode</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
-                    <protoSourceRoot>src/main/resources</protoSourceRoot>
-                    <protocArtifact>com.google.protobuf:protoc:${proto.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protocVersion>${proto.version}</protocVersion>
                 </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                     </execution>
