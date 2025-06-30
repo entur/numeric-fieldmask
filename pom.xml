@@ -190,6 +190,7 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
+                    <embedSourcesInClassOutputs>true</embedSourcesInClassOutputs>
                     <protocVersion>${proto.version}</protocVersion>
                 </configuration>
                 <executions>
