@@ -3,23 +3,27 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.entur.protobuf</groupId>
     <artifactId>numeric-fieldmask</artifactId>
-    <version>1.2.10-SNAPSHOT</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Numeric field mask for protobuf</name>
     <description>Alternative to standard protobuf field masks - based on fieldnumbers instead of fieldnames</description>
     <properties>
+        <jreleaser-maven-plugin.version>1.18.0</jreleaser-maven-plugin.version>
+        <junit-jupiter.version>5.11.4</junit-jupiter.version>
         <junit.jupiter.version>5.11.4</junit.jupiter.version>
         <junit.platform.version>1.11.4</junit.platform.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <proto.version>4.29.2</proto.version>
-        <protobuf-maven-plugin.version>0.7.1</protobuf-maven-plugin.version>
-        <protobuf.plugin.version>0.6.1</protobuf.plugin.version>
-        <spotless.version>2.43.0</spotless.version>
+        <proto.version>4.32.0</proto.version>
+        <protobuf-maven-plugin.version>3.2.1</protobuf-maven-plugin.version>
+        <spotless.version>2.44.2</spotless.version>
     </properties>
     <dependencies>
         <dependency>
@@ -30,7 +34,7 @@
         <dependency>
             <groupId>com.google.api.grpc</groupId>
             <artifactId>proto-google-common-protos</artifactId>
-            <version>2.50.0</version>
+            <version>2.51.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -59,29 +63,30 @@
         </dependency>
     </dependencies>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jreleaser</groupId>
+                    <artifactId>jreleaser-maven-plugin</artifactId>
+                    <version>${jreleaser-maven-plugin.version}</version>
+                    <inherited>false</inherited>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -102,19 +107,11 @@
                     </java>
                     <encoding>UTF-8</encoding>
                 </configuration>
-                <dependencies>
-                    <!-- NOTE not publicly available artifact -->
-                    <dependency>
-                        <groupId>no.entur</groupId>
-                        <artifactId>abt-codestyle</artifactId>
-                        <version>0.36</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
                     <excludes>
@@ -153,20 +150,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.amashchenko.maven.plugin</groupId>
-                <artifactId>gitflow-maven-plugin</artifactId>
-                <version>1.21.0</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <commitMessagePrefix>[ci skip]</commitMessagePrefix>
-                    <allowSnapshots>false</allowSnapshots>
-                    <skipTestProject>true</skipTestProject>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>com.github.ekryd.sortpom</groupId>
                 <artifactId>sortpom-maven-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>4.0.0</version>
                 <configuration>
                     <predefinedSortOrder>custom_1</predefinedSortOrder>
                     <nrOfIndentSpace>4</nrOfIndentSpace>
@@ -200,22 +186,84 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>dev.cookiecode</groupId>
+                <groupId>io.github.ascopes</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
-                    <protoSourceRoot>src/main/resources</protoSourceRoot>
-                    <protocArtifact>com.google.protobuf:protoc:${proto.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <embedSourcesInClassOutputs>true</embedSourcesInClassOutputs>
+                    <protocVersion>${proto.version}</protocVersion>
                 </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>generate</goal>
                         </goals>
                         <phase>process-resources</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>17</source>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jreleaser</groupId>
+                <artifactId>jreleaser-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <jreleaser>
+                        <signing>
+                            <active>ALWAYS</active>
+                            <armored>true</armored>
+                        </signing>
+                        <deploy>
+                            <maven>
+                                <mavenCentral>
+                                    <sonatype>
+                                        <active>RELEASE</active>
+                                        <url>https://central.sonatype.com/api/v1/publisher</url>
+                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                    </sonatype>
+                                </mavenCentral>
+                                <nexus2>
+                                    <maven-central>
+                                        <active>SNAPSHOT</active>
+                                        <url>https://ossrh-staging-api.central.sonatype.com/service/local</url>
+                                        <snapshotUrl>https://central.sonatype.com/repository/maven-snapshots</snapshotUrl>
+                                        <applyMavenCentralRules>true</applyMavenCentralRules>
+                                        <snapshotSupported>true</snapshotSupported>
+                                        <closeRepository>true</closeRepository>
+                                        <releaseRepository>true</releaseRepository>
+                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                    </maven-central>
+                                </nexus2>
+                            </maven>
+                        </deploy>
+                        <release>
+                            <github>
+                                <skipTag>false</skipTag>
+                                <skipRelease>true</skipRelease>
+                            </github>
+                        </release>
+                    </jreleaser>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -246,85 +294,27 @@
         <url>https://github.com/entur/numeric-fieldmask-protobuf/tree/master</url>
         <tag>HEAD</tag>
     </scm>
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <name>Sonatype release</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <name>Sonatype snapshot</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <profiles>
         <profile>
-            <id>entur-maven-central-local</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <distributionManagement>
-                <repository>
-                    <id>entur-maven-central-local</id>
-                    <name>Entur maven central local</name>
-                    <url>https://entur2.jfrog.io/entur2/entur-maven-central-release-local</url>
-                </repository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>release</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
+            <id>publication</id>
+            <properties>
+                <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.7</version>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven-source-plugin.version}</version>
                         <executions>
                             <execution>
-                                <id>sign-artifacts</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <phase>verify</phase>
-                                <configuration>
-                                    <passphrase>${env.SONATYPE_GPG_KEY_PASSWORD}</passphrase>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc-plugin.version}</version>
-                        <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <doclint>none</doclint>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
+                                <id>attach-sources</id>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -55,7 +55,7 @@ public class NumericFieldMaskUtil {
 	 * @param protoDescriptor MessageDescriptor of root message that paths refer to
 	 * @param mask            mask to process
 	 * @return standard fieldmask that can be used using FieldMaskUtil. NB make sure returned FieldMask is valid by testing against
-	 *         FieldMaskUtil.isValid(protoDescriptor,<returned FieldMask>)
+	 *         {@linkplain  FieldMaskUtil#isValid}
 	 */
 	public static FieldMask toFieldMask(Descriptors.Descriptor protoDescriptor, final NumericFieldMask mask) throws InvalidFieldMaskException {
 		CacheKey cacheKey = new CacheKey(protoDescriptor.getFullName(), mask);
