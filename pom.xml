@@ -22,7 +22,7 @@
         <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <proto.version>4.33.0</proto.version>
-        <protobuf-maven-plugin.version>3.9.0</protobuf-maven-plugin.version>
+        <protobuf-maven-plugin.version>5.0.0</protobuf-maven-plugin.version>
         <spotless.version>3.0.0</spotless.version>
     </properties>
     <dependencies>
@@ -192,7 +192,7 @@
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
                     <embedSourcesInClassOutputs>true</embedSourcesInClassOutputs>
-                    <protocVersion>${proto.version}</protocVersion>
+                    <protoc>${proto.version}</protoc>
                 </configuration>
                 <executions>
                     <execution>
