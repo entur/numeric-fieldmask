@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <proto.version>4.33.0</proto.version>
         <protobuf-maven-plugin.version>5.0.0</protobuf-maven-plugin.version>
-        <spotless.version>3.0.0</spotless.version>
+        <spotless.version>3.2.1</spotless.version>
     </properties>
     <dependencies>
         <dependency>
