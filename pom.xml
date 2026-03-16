@@ -9,9 +9,7 @@
     <description>Alternative to standard protobuf field masks - based on fieldnumbers instead of fieldnames</description>
     <properties>
         <jreleaser-maven-plugin.version>1.20.0</jreleaser-maven-plugin.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
-        <junit.jupiter.version>5.11.4</junit.jupiter.version>
-        <junit.platform.version>1.11.4</junit.platform.version>
+        <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
         <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
@@ -41,25 +39,25 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.jupiter.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
-            <version>${junit.platform.version}</version>
+            <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -119,13 +117,6 @@
                         <exclude>**/*IT.java</exclude>
                     </excludes>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit.jupiter.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
