@@ -17,13 +17,14 @@ jobs:
     name: CodeQL Scan
     uses: entur/gha-security/.github/workflows/code-scan.yml@aeebe7ddac5952b3ef9f14380e2d5884b42a6c2e  # v2.13.0
     # no secrets necessary
-    permissions: # some of these only apply when running on the default branch
+    permissions:
+      # CodeQL - required to fetch Maven package from Github Registry
       packages: read
-      actions: read
-      contents: write
-      pull-requests: write
+      # CodeQL - required for all workflows
       security-events: write
-      issues: write
+      # CodeQL - only required for workflows in private repositories
+      actions: read
+      contents: read
     with:
       use_setup_java: true
       java_version: "25"
